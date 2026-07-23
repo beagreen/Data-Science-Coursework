@@ -42,4 +42,29 @@ This code is intended to be used in the order set out below:
 ## Requirements
 
 The code was produced using Python 3.12.11
-Required packages: 
+### Required packages: 
+** mat_to_parquet.py: ** numpy,y scipy, h5py, polars
+
+
+
+## How to
+
+**mat_to_parquet.py: **
+In PowerShell
+1. Change directory to the scripts folder
+```
+cd "FILEPATH"
+```
+2. Run the script directly
+```
+python mat_to_parquet.py -i FILEPATH OF DATA FILE/FOLDER  -o FILEPATH OF OUTPUT FOLDER
+```
+In Spyder
+In Console
+```
+runfile(
+    'mat_to_parquet.py',
+    args=r'-i FILEPATH OF DATA FILE/FOLDER -o FILEPATH OF OUTPUT FOLDER',
+    wdir=r'FILEPATH OF WORKING DIRECTORY'
+)
+```
