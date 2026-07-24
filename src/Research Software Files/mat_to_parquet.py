@@ -15,42 +15,55 @@ import numpy as np
 
 import sys
 
-def read_mat_file(filepath: Path) -> dict: # Reads in the .mat file 
+def read_mat_file(filepath: Path) -> dict:
     parsed_data = {}
-    with h5py.File(filepath, "r") as h5_file:
-        for key in h5_file.keys():
-            # Skip MATLAB internal metadata groups
-            if key.startswith("#"):
-                continue
-                
-            obj = h5_file[key]
-            
-            # Ensure we are reading a Dataset, not an HDF5 Sub-group
-            if isinstance(obj, h5py.Dataset):
-                data = obj[()]
-                
-                # Convert to numpy array and flatten
-                data_array = np.asarray(data).squeeze()
-                
-                # Squeeze scalar 0D values to 1D so Polars can frame them
-                if data_array.ndim == 0:
-                    data_array = data_array.reshape(1)
-                else:
-                    data_array = data_array.flatten()
-                    
-                parsed_data[key] = data_array
 
-    # Equalize array lengths so Polars doesn't crash on length mismatches
+    with h5py.File(filepath, "r") as h5_file:
+        # 1. Find the top-level struct name (ignoring #refs# and metadata)
+        top_keys = [k for k in h5_file.keys() if not k.startswith("#")]
+        if not top_keys:
+            return {}
+
+        struct_group = h5_file[top_keys[0]]
+
+        # 2. Iterate through all field names in the struct (e.g. PlateHFAccZ, SpindleAccZ)
+        for field_name in struct_group.keys():
+            if field_name.startswith("#"):
+                continue
+
+            field_obj = struct_group[field_name]
+
+            # Direct numeric dataset
+            if isinstance(field_obj, h5py.Dataset):
+                data = field_obj[()]
+                if data.dtype == "object":  # Contains references to array objects
+                    extracted_runs = []
+                    for ref_cell in data.flat:
+                        try:
+                            # Dereference HDF5 object pointer
+                            ref_data = h5_file[ref_cell][()].squeeze()
+                            extracted_runs.append(ref_data)
+                        except Exception:
+                            continue
+
+                    # Concatenate or flatten signal across runs
+                    if extracted_runs:
+                        parsed_data[field_name] = np.concatenate([r.flatten() for r in extracted_runs if r.size > 0])
+                else:
+                    parsed_data[field_name] = data.squeeze().flatten()
+
+    # Equalize array lengths with NaNs so Polars creates a valid DataFrame
     if parsed_data:
         max_len = max(len(arr) for arr in parsed_data.values())
         for key, arr in parsed_data.items():
             if len(arr) < max_len:
-                # Pad shorter arrays with NaN
                 padded = np.full(max_len, np.nan)
-                padded[:len(arr)] = arr
+                padded[: len(arr)] = arr
                 parsed_data[key] = padded
 
     return parsed_data
+
+
 def mat_to_parquet(input_path: Path, output_dir: Path) -> Path: #converts a .mat file to a compressed .parquet
     
     #ensure input esists

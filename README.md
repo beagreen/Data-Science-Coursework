@@ -1,7 +1,7 @@
 # Data Science Coursework
-** Author: ** Beatrice Green
-** Institution: ** The University of Sheffield
-** Module: ** MAC4112
+**Author:** Beatrice Green
+**Institution:** The University of Sheffield
+**Module:** MAC4112
 
 ## Project Intentions
 
@@ -43,13 +43,13 @@ This code is intended to be used in the order set out below:
 
 The code was produced using Python 3.12.11
 ### Required packages: 
-** mat_to_parquet.py: ** numpy,y scipy, h5py, polars
+**mat_to_parquet.py:** numpy,y scipy, h5py, polars
 
 
 
 ## How to
 
-**mat_to_parquet.py: **
+**mat_to_parquet.py:**
 In PowerShell
 1. Change directory to the scripts folder
 ```
