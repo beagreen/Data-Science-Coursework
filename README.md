@@ -43,9 +43,9 @@ This code is intended to be used in the order set out below:
 
 The code was produced using Python 3.12.11
 ### Required packages: 
-**mat_to_parquet.py:** numpy,y scipy, h5py, polars
+**mat_to_parquet.py:** argparse, pathlib, numpy, h5py, polars, sys
 
-
+**get_features:** argparse, pathlib, numpy, scipy.stats, polars, sys
 
 ## How to
 
@@ -60,11 +60,13 @@ cd "FILEPATH"
 python mat_to_parquet.py -i FILEPATH OF DATA FILE/FOLDER  -o FILEPATH OF OUTPUT FOLDER
 ```
 In Spyder
-In Console
+    in the console:
 ```
-runfile(
-    'mat_to_parquet.py',
-    args=r'-i FILEPATH OF DATA FILE/FOLDER -o FILEPATH OF OUTPUT FOLDER',
-    wdir=r'FILEPATH OF WORKING DIRECTORY'
-)
+%run mat_to_parquet.py -i "FILEPATH OF DATA FILE/FOLDER" -o "FILEPATH OF OUTPUT FOLDER"
 ```
+
+**get_features:** 
+Same as mat_to_parquet but change the input and output file locations
+
+
+

@@ -19,14 +19,14 @@ def read_mat_file(filepath: Path) -> dict:
     parsed_data = {}
 
     with h5py.File(filepath, "r") as h5_file:
-        # 1. Find the top-level struct name (ignoring #refs# and metadata)
+        # find the top-level struct name (ignoring #refs# and metadata)
         top_keys = [k for k in h5_file.keys() if not k.startswith("#")]
         if not top_keys:
             return {}
 
         struct_group = h5_file[top_keys[0]]
 
-        # 2. Iterate through all field names in the struct (e.g. PlateHFAccZ, SpindleAccZ)
+        # iterate through all field names in the struct 
         for field_name in struct_group.keys():
             if field_name.startswith("#"):
                 continue
