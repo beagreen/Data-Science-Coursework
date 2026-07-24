@@ -1,6 +1,8 @@
 # Data Science Coursework
 **Author:** Beatrice Green
+
 **Institution:** The University of Sheffield
+
 **Module:** MAC4112
 
 ## Project Intentions
@@ -46,6 +48,8 @@ The code was produced using Python 3.12.11
 **mat_to_parquet.py:** argparse, pathlib, numpy, h5py, polars, sys
 
 **get_features:** argparse, pathlib, numpy, scipy.stats, polars, sys
+
+**classify.py:** argprse, pathlib, pandas, scikit-learn
 
 ## How to
 

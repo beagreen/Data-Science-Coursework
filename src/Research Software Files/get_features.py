@@ -7,6 +7,9 @@ Created on Fri Jul 24 10:12:29 2026
 This file will be used to extract the wawnted features from the created .parquet files. 
 The targetted features are statistical  processing features
 
+For the intended purpose of this script use it after mat_to_parquet to get statistical features from the .parquet files
+It will create extracted_features.csv and extracted_features.parquet
+
 Statistics help:
     crest factor: analysis of the spikiness of a waveform (Peak Amp/RMS)
     skewness: measures the asymmetry of a probability distribution about its mean
