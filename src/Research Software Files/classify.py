@@ -26,6 +26,18 @@ def load_prep_data(feature_path: Path):
     else:
         df = pd.read_csv(feature_path)
     
+    #pivot the table so that random forest can see all channels at once 
+    df_pivoted = df.pivot(
+        index="file_name", 
+        columns="channel", 
+        values=["mean", "standard_deviation", "variance", "rms", "peak_to_peak", "crest_factor", "skewness", "kurtosis"]
+    )
+    
+    # Flatten column names (e.g., ('rms', 'SpindleAccZ') -> 'SpindleAccZ_rms')
+    df_pivoted.columns = [f"{col[1]}_{col[0]}" for col in df_pivoted.columns]
+    df_pivoted = df_pivoted.reset_index()
+    
+    
 # extract the right category from the filename - designed for the target data but will work for other filenames too
     def categorise_from_filename(name: str) -> str:
         name_str = str(name)
@@ -41,20 +53,20 @@ def load_prep_data(feature_path: Path):
             return "Surface Cracks"
         elif "ToolWear" in name_str:
             return "Tool Wear"
-        elif "Unbalance" in name_str:
+        elif "Unbalanced" in name_str:
             return "Unbalanced"
         else: #Using filename as the label
             return Path(name_str).stem.split("_")[0]
     
     #creaate both feature and target dataframes (features = the statistical data from the experimental trial, while targets = the experimental categories)
-    df["target"] = df["file_name"].apply(categorise_from_filename)
-    
-    ignore_cols = ["file_name", "channel", "target"]
-    feature_cols = [c for c in df.columns if c not in ignore_cols]
-    
-    X_features = df[feature_cols]
-    y_targets = df["target"]
-    
+    df_pivoted["target"] = df_pivoted["file_name"].apply(categorise_from_filename)
+
+    ignore_cols = ["file_name", "target"]
+    feature_cols = [c for c in df_pivoted.columns if c not in ignore_cols]
+
+    X_features = df_pivoted[feature_cols]
+    y_targets = df_pivoted["target"]
+
     return X_features, y_targets, feature_cols
 
 def run_classification(X_features, y_targets, feature_names, output_dir: Path):
