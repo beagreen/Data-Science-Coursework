@@ -17,6 +17,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GroupShuffleSplit
 
 
 #read file into a pandas dataframe
@@ -28,7 +29,7 @@ def load_prep_data(feature_path: Path):
     
     #pivot the table so that random forest can see all channels at once 
     df_pivoted = df.pivot(
-        index="file_name", 
+        index=["file_name", "window_id"],
         columns="channel", 
         values=["mean", "standard_deviation", "variance", "rms", "peak_to_peak", "crest_factor", "skewness", "kurtosis"]
     )
@@ -58,29 +59,38 @@ def load_prep_data(feature_path: Path):
         else: #Using filename as the label
             return Path(name_str).stem.split("_")[0]
     
-    #creaate both feature and target dataframes (features = the statistical data from the experimental trial, while targets = the experimental categories)
+    #create both feature and target dataframes (features = the statistical data from the experimental trial, while targets = the experimental categories)
     df_pivoted["target"] = df_pivoted["file_name"].apply(categorise_from_filename)
 
-    ignore_cols = ["file_name", "target"]
+    ignore_cols = ["file_name", "window_id", "target"]
     feature_cols = [c for c in df_pivoted.columns if c not in ignore_cols]
 
     X_features = df_pivoted[feature_cols]
     y_targets = df_pivoted["target"]
+    groups = df_pivoted["file_name"]
 
-    return X_features, y_targets, feature_cols
+    return X_features, y_targets, groups, feature_cols
 
-def run_classification(X_features, y_targets, feature_names, output_dir: Path):
-    output_dir.mkdir(parents = True, exist_ok = True)
+def run_classification(X_features: pd.DataFrame, y_targets: pd.Series, groups: pd.Series, feature_names: list, output_dir: Path):
+    #sorting into train and test based on group so data from the same test doesn't end up in both the training and testing sets 
+    #this data would be very similar - model may be memorising not generalising
+    gss = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=41)
+    train_idx, test_idx = next(gss.split(X_features, y_targets, groups=groups))
     
-    X_train, X_test, y_train, y_test = train_test_split(X_features, y_targets, 
-                                                        test_size=0.2, random_state=41, stratify=y_targets)
+    X_train, X_test = X_features.iloc[train_idx], X_features.iloc[test_idx]
+    y_train, y_test = y_targets.iloc[train_idx], y_targets.iloc[test_idx]
+    
 
-#creating the random forest decision trees
+    print(f"Training multi-class Random Forest on {len(y_targets.unique())} target classes...")
+    print(f"Train files: {groups.iloc[train_idx].nunique()} | Test files: {groups.iloc[test_idx].nunique()}")
+    
+    #creating the random forest decision trees
     print(f"Training multi-class Random Forest on {len(y_targets.unique())} target classes...")
     clf = RandomForestClassifier(n_estimators=100, random_state=24)
     clf.fit(X_train, y_train)
 
     y_pred = clf.predict(X_test)
+        
     
     # printing a 'classification report' to visually see the outcomes of the random forest analysis
     print("\n" + "=" * 65)
@@ -94,8 +104,9 @@ def main():
     parser.add_argument("-o", "--output", type=str, default="./data/results", help="Directory to save plots")
 
     args = parser.parse_args()
-    X_features, y_targets, feature_names = load_prep_data(Path(args.input))
-    run_classification(X_features, y_targets, feature_names, Path(args.output))
+    X_features, y_targets, groups, feature_names = load_prep_data(Path(args.input))
+    run_classification(X_features, y_targets, groups, feature_names, Path(args.output))
+
     
 if __name__ == "__main__":
     main()
