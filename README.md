@@ -39,17 +39,11 @@ The dataset is not available from this repository. The data is accepted as .mat 
 ## Structure
 
 This code is intended to be used in the order set out below:
+1. mat_to_parquet.py
+2. get_features.py
+3. classify.py
 
 
-## Requirements
-
-The code was produced using Python 3.12.11
-### Required packages: 
-**mat_to_parquet.py:** argparse, pathlib, numpy, h5py, polars, sys
-
-**get_features:** argparse, pathlib, numpy, scipy.stats, polars, sys, tqdm
-
-**classify.py:** argprse, pathlib, pandas, scikit-learn
 
 ## How to
 
@@ -69,8 +63,15 @@ In Spyder
 %run mat_to_parquet.py -i "FILEPATH OF DATA FILE/FOLDER" -o "FILEPATH OF OUTPUT FOLDER"
 ```
 
-**get_features:** 
-Same as mat_to_parquet but change the input and output file locations
+**get_features.py:** 
+Same as mat_to_parquet.py but change the input and output file locations
+
+**classify.py:**
+same as mat_to_parquet.py change input and output locations and ensure that the input is a .parquet or .csv file NOT a folder. 
+
+**plotting.py:**
+only accepts a .csv file
+
 
 
 
