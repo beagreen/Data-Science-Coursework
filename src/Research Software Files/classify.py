@@ -43,33 +43,23 @@ def load_prep_data(feature_path: Path):
     df_pivoted.columns = [f"{col[1]}_{col[0]}" for col in df_pivoted.columns]
     df_pivoted = df_pivoted.reset_index()
     
-    
-# extract the right category from the filename - designed for the target data but will work for other filenames too
+    #categorise based on whole filename (Linear_Baseline and Machining_Baseline no longer in the same category)
     def categorise_from_filename(name: str) -> str:
-        name_str = str(name)
-        if "Baseline" in name_str:
-            return "Baseline"
-        elif "Heavy" in name_str:
-            return "Heavy Tool"
-        elif "Override" in name_str:
-            return "Feedrate Adjusted"
-        elif "Misalignment" in name_str:
-            return "Misalignment"
-        elif "SurfaceCracks" in name_str:
-            return "Surface Cracks"
-        elif "ToolWear" in name_str:
-            return "Tool Wear"
-        elif "Unbalanced" in name_str:
-            return "Unbalanced"
-        else: #Using filename as the label
-            return Path(name_str).stem.split("_")[0]
+        stem = Path(str(name)).stem
+        
+        clean_name = stem.replace('-', '_')
+        parts = clean_name.split('_')
+        
+        filtered_parts = [ p for p in parts if not p.lower().startswith('run') and not p.isdigit()]
+        
+        return " ".join(filtered_parts)
     
     #create both feature and target dataframes (features = the statistical data from the experimental trial, while targets = the experimental categories)
     df_pivoted["target"] = df_pivoted["file_name"].apply(categorise_from_filename)
 
     return df_pivoted
 
-def chronological_split(df_pivoted: pd.DataFrame, train_ratio: float = 0.8): #80/20 chronological split per file
+def chronological_split(df_pivoted: pd.DataFrame, train_ratio: float = 0.80): #80/20 chronological split per file
     train_indices = []
     test_indices = []
     
