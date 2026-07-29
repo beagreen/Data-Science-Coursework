@@ -3,18 +3,11 @@
 Created on Tue Jul 28 11:13:55 2026
 
 @author: map25bg
-"""
-
-"""
-Created on Mon Jul 28 11:16:29 2026
-
-@author: map25bg
 
 This file is designed to plot and visualise the features classified in classify.py
 It has been designed specifically for the data used in this project. It will assign labels based on those expected from the given Data
 
-takes data in the form of a .csv
-
+Uses a command line interface as laid out in the README
 """
 
 import argparse
@@ -22,23 +15,8 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 from sklearn.preprocessing import StandardScaler
-
-
-
-#sets the style of the plots
-def set_style():
-    sns.set_theme(style="whitegrid")
-    plt.rcParams.update({
-        "font.family": "sans-serif",
-        "font.size": 11,
-        "axes.labelsize": 11,
-        "axes.titlesize": 13,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10,
-        "figure.autolayout": True,})
 
 
 #assigns class names to the data groups    
@@ -46,7 +24,7 @@ def assign_classes(target_str: str) -> str:
     target_lower = str(target_str).lower()
     
     if "linear" in target_lower:
-        return "Linear Fingerprint"
+        return "Linear"
     elif "machining" in target_lower:
         return "Machining"
     elif "5000" in target_lower:
@@ -71,11 +49,25 @@ def plot_confusion_matrices(results_path: Path, output_dir: Path):
 
     for regime in unique_regimes:
         subset = df[df["regime"] == regime]
+        
+        def strip_labels(label_str: str) -> str:
+            cleaned = str(label_str).replace("Segmented ", "")
+            prefixes_to_remove = [
+                "Spindle5000 ",
+                "Spindle12000 ",
+                "Linear ",
+                "Machining ",
+                ]
+            for prefix in prefixes_to_remove:
+                cleaned = cleaned.replace(prefix, ""). strip()
+            return cleaned
+        
+        subset["y_true_clean"] = subset["y_true"].apply(strip_labels)
+        subset["y_pred_clean"] = subset["y_pred"].apply(strip_labels)
 
         # Get unique labels present within this operational regime
-        labels = sorted(
-            list(set(subset["y_true"].unique()).union(set(subset["y_pred"].unique())))
-        )
+        labels = sorted(subset["y_true_clean"].unique())
+        
 
         if len(labels) <= 1:
             print(
@@ -83,25 +75,32 @@ def plot_confusion_matrices(results_path: Path, output_dir: Path):
             continue
 
         cm = confusion_matrix(
-            subset["y_true"], subset["y_pred"], labels=labels, normalize="true"
+            subset["y_true_clean"], subset["y_pred_clean"], labels=labels, normalize="true"
         )
 
         fig, ax = plt.subplots(figsize=(8, 6))
         disp = ConfusionMatrixDisplay(
             confusion_matrix=cm, display_labels=labels
         )
-        disp.plot(cmap="Blues", ax=ax, xticks_rotation=45, values_format=".2f")
+        disp.plot(cmap="Blues", ax=ax, values_format=".2f")
+        
+        ax.set_xticks(range(len(labels)))
+        ax.set_xticklabels(
+            labels, rotation=45, ha="right", rotation_mode="anchor", fontsize=12)
+        ax.set_yticklabels(labels, fontsize=12)
+        
+        ax.set_xlabel("Predicted label", labelpad=10, fontsize=14, fontweight="bold")
+        ax.set_ylabel("True label", labelpad=10, fontsize=14, fontweight="bold")
 
         ax.set_title(
             f"Classification Performance: {regime}\n(Normalized Confusion Matrix)",
-            pad=15,
-            fontweight="bold",
+            pad=15, fontsize=16, fontweight="bold",
         )
         ax.grid(False)
 
         # Save plot for this operational class
         safe_regime_name = regime.replace(" ", "_").replace("/", "_").lower()
-        save_path = output_dir / f"cm_{safe_regime_name}.png"
+        save_path = output_dir / f"confusion_{safe_regime_name}.png"
         plt.savefig(save_path, dpi=300, bbox_inches="tight")
         plt.close()
 
@@ -325,7 +324,7 @@ def main():
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    set_style()
+    
 
     print("=========================================================")
     print("STARTING COMPLETE VISUALIZATION SUITE")

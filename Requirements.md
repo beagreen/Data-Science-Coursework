@@ -16,5 +16,5 @@ The code was produced using Python 3.12.11
 
 **classify.py:** argprse, pathlib, pandas, scikit-learn
 
-**plotting.py:** argparse, pathlib, matplotlib, pandas, seaborn, scikit-learn
+**plotting.py:** argparse, pathlib, matplotlib, pandas, scikit-learn
 

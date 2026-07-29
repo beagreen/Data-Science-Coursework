@@ -36,14 +36,27 @@ https://doi.org/10.15131/shef.data.24125715.v1
 ```
 The dataset is not available from this repository. The data is accepted as .mat files and then converted to parquet files by this code. 
 
-## Structure
+## Code Structure
 
 This code is intended to be used in the order set out below:
 1. mat_to_parquet.py
+    requires .mat files
+    
 2. get_features.py
+    requires (-i) .parquet file or folder with .parquet file
+    creates (-o) extracted_features.parquet
+    
 3. classify.py
+    requires (-i) extracted_features.parquet 
+    creates (-o) classification_results.csv and feature_importance.csv
+    
+4. plotting.py
+    requires (-f) extracted_features.parquet and (-r) classification_results.csv 
+    creates confusion matrices.png and scatter plots.png
 
+Use the files created by the previous scripts to fulfill the input requirements of each script or use your equivalent.
 
+Module requirements are laid out in Requirements.md
 
 ## How to
 
@@ -67,11 +80,11 @@ In Spyder
 Same as mat_to_parquet.py but change the input and output file locations
 
 **classify.py:**
-same as mat_to_parquet.py change input and output locations and ensure that the input is a .parquet or .csv file NOT a folder. 
+Same as mat_to_parquet.py change input and output locations and ensure that the input is a .parquet or .csv file - NOT a folder. 
 
 **plotting.py:**
-only accepts a .csv file
-
+Requires two inputs (-f) feature_importance.csv and (-r) classification_results.csv.
+Output (-o) is folder to save .png files
 
 
 

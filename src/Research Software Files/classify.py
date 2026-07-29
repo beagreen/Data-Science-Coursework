@@ -5,9 +5,11 @@ Created on Fri Jul 24 13:23:04 2026
 
 This script is written to classify the extracted features. 
 First by splitting the features from the target labels
-Then 80% of the data will be used to test the model, using the remaining 20% for testing of a Random Forest ML model
+Then chronologically 80% of the data will be used to test the model, using the remaining 20% for testing of a Random Forest ML model
 
-It will take features from a .parquet or a .csv file type
+It will take features from a .parquet or a .csv file type - use after get_features.py
+
+Uses a command line interface as laid out in the README
 """
 import argparse
 from pathlib import Path

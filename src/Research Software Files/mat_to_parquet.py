@@ -4,6 +4,8 @@ This first file takes .mat files and converts them to .parquet files.
 
 This uses a CLI approach so that the data is never integral to the file and can be used across devices
 
+Uses a command line interface as laid out in the README
+
 """
 
 import argparse
