@@ -126,3 +126,5 @@ dmypy.json
 # File types
 *.mat
 *.parquet
+*.csv
+*.png
