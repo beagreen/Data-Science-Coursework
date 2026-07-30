@@ -16,7 +16,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
-from sklearn.preprocessing import StandardScaler
 
 
 #assigns class names to the data groups    
