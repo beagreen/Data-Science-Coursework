@@ -25,3 +25,5 @@ The code was produced using Python 3.12.11
 
 **test_classify.py:** sys, tempfile, unittest, pathlib, numpy, pandas
 
+**test_plotting.py:** sys, tempfile, unittest, pathlib, pandas
+
