@@ -27,7 +27,7 @@ class TestMatToParquet(unittest.TestCase):
         self.temp_dir_obj = tempfile.TemporaryDirectory()
         self.temp_dir = Path(self.temp_dir_obj.name)
         
-    def delete(self):
+    def tearDown(self):
         #deletes the temporary folder
         self.temp_dir_obj.cleanup()
         

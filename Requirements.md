@@ -18,3 +18,8 @@ The code was produced using Python 3.12.11
 
 **plotting.py:** argparse, pathlib, matplotlib, pandas, scikit-learn
 
+### Test Required packages
+**test_mat_to_parquet.py:** sys, tempfile, unittest, pathlib, h5py, numpy, polars
+
+**test_get_features.py:** sys, tempfile, unittest, pathlib, numpy, polars
+
