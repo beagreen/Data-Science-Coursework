@@ -1,10 +1,4 @@
-"""
-Created on Tue Jul 28 10:35:20 2026
-
-@author: map25bg
-"""
-
-#Requirements**
+#Requirements
 
 The code was produced using Python 3.12.11
 
