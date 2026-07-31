@@ -36,12 +36,11 @@ https://doi.org/10.15131/shef.data.24125715.v1
 ```
 The dataset is not available from this repository. The data is accepted as .mat files and then converted to .parquet files by this code. 
 
-The papers associated with this data are "Development and Testing of a Combined Machine and Process Health Monitoring System
-Author links open overlay panel", Dominguez-Caballero et al 
+The papers associated with this data are **"Development and Testing of a Combined Machine and Process Health Monitoring System"**, Dominguez-Caballero et al. 
 ```
 https://doi.org/10.1016/j.procir.2020.01.037
 ```
-and "The application of machine learning to sensor signals for machine tool and process health assessment", Moore et al.
+and **"The application of machine learning to sensor signals for machine tool and process health assessment"**, Moore et al.
 ```
 https://doi.org/10.1177/0954405420960892
 ```
@@ -49,18 +48,18 @@ https://doi.org/10.1177/0954405420960892
 ## Code Structure
 
 This code is intended to be used in the order set out below:
-1. **mat_to_parquet.py**
+1. ***mat_to_parquet.py***
     - requires .mat files 
     
-2. **get_features.py**
+2. ***get_features.py***
     - requires (-i) .parquet file or folder with .parquet file
     - creates (-o) extracted_features.parquet
     
-3. **classify.py**
+3. ***classify.py***
     - requires (-i) extracted_features.parquet 
     - creates (-o) classification_results.csv and feature_importance.csv
     
-4. **plotting.py**
+4. ***plotting.py***
    -  requires (-f) extracted_features.parquet and (-r) classification_results.csv 
     - creates confusion matrices.png and scatter plots.png
 
@@ -70,9 +69,9 @@ Module requirements are laid out in ***Requirements.md***
 
 ## How to run
 
-**mat_to_parquet.py:**
+***mat_to_parquet.py:***
 
-**In PowerShell:**
+In PowerShell:
 1. Change directory to the scripts folder
 ```
 cd "FILEPATH"
@@ -81,20 +80,20 @@ cd "FILEPATH"
 ```
 python mat_to_parquet.py -i FILEPATH OF DATA FILE/FOLDER  -o FILEPATH OF OUTPUT FOLDER
 ```
-**In Spyder:**
+In Spyder:
 
-in the console:
+1. In the console:
 ```
 %run mat_to_parquet.py -i "FILEPATH OF DATA FILE/FOLDER" -o "FILEPATH OF OUTPUT FOLDER"
 ```
 
-**get_features.py:** 
+***get_features.py:***
 Same as mat_to_parquet.py but change the input and output file locations
 
-**classify.py:**
+***classify.py:***
 Same as mat_to_parquet.py change input and output locations and ensure that the input is a .parquet or .csv file - NOT a folder. 
 
-**plotting.py:**
+***plotting.py:***
 Requires two inputs (-f) feature_importance.csv and (-r) classification_results.csv.
 Output (-o) is folder to save .png files
 
