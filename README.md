@@ -61,7 +61,7 @@ This code is intended to be used in the order set out below:
     
 4. ***plotting.py***
    -  requires (-f) extracted_features.parquet and (-r) classification_results.csv 
-    - creates confusion matrices.png and scatter plots.png
+    - creates confusion matrices.png 
 
 Use the files created by the previous scripts to fulfill the input requirements of each script or use your equivalent.
 
